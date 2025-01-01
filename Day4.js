@@ -1,4 +1,4 @@
-// 1: Function accepting only 2 parameters
+// 1
 function exactlyTwoParameters(param1, param2) {
   if (arguments.length !== 2) {
     throw new Error("This function must be called with exactly 2 parameters.");
@@ -9,8 +9,7 @@ function exactlyTwoParameters(param1, param2) {
 // Example 
 try {
   console.log(exactlyTwoParameters(1, 2));
-  // console.log(exactlyTwoParameters(1)); // This will throw an error
-  // console.log(exactlyTwoParameters(1, 2, 3)); // This will throw an error
+
 } catch (error) {
   console.error(error.message);
 }
@@ -30,7 +29,7 @@ function addNumericalValues() {
 // Example 
 try {
   console.log(addNumericalValues(1, 2, 3, 4, 5));
-  // console.log(addNumericalValues(1, 2, 'a', 4)); // This will throw an error
+
 } catch (error) {
   console.error(error.message);
 }
