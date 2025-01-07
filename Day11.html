@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD Operations</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #1e1e1e;
+            color: #f8f8f2;
+        }
+        .container {
+            background-color: #333;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+            width: 600px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #f0f0f0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            color: #f8f8f2;
+        }
+        th, td {
+            border: 1px solid #666;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #555;
+            color: #eee;
+        }
+        .actions {
+            display: flex;
+            gap: 5px;
+        }
+        .actions button {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .actions button.edit {
+            background-color: #ea9100;
+            color: #333;
+        }
+        .actions button.delete {
+            background-color: #ea9100;
+            color: #333;
+        }
+
+        .form-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .form-container label {
+            font-weight: bold;
+            color: #eee;
+        }
+        .form-container input[type="text"] {
+            padding: 8px;
+            border: 1px solid #777;
+            border-radius: 4px;
+            flex-grow: 1;
+            background-color: #444;
+            color: #f8f8f2;
+        }
+        .form-container button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            background-color: #009ae7;
+            color: #333;
+            cursor: pointer;
+        }
+        .form-container button.update {
+            background-color: #4caf50;
+            color: #333;
+        }
+        .form-container button.close {
+            background-color: #8a0000;
+            color: #9f9f9f;
+        }
+        #updateForm {
+            display: none;
+            margin-top: 10px;
+            background-color: #333;
+            padding: 10px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Create, Read, Update, Delete (CRUD)</h2>
+        <table id="dataTable">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
+        <div class="form-container">
+            <label for="createFullName">Full Name:</label>
+            <input type="text" id="createFullName" placeholder="Enter full name">
+            <button id="createBtn">+ Create</button>
+        </div>
+
+        <div class="form-container" id="updateForm">
+            <label for="updateFullName">Full Name:</label>
+            <input type="text" id="updateFullName">
+            <button id="updateBtn" class="update">Update</button>
+            <button id="closeUpdateBtn" class="close">Close</button>
+        </div>
+    </div>
+
+    <script>
+        let data = [
+            { id: 1, name: "Code Wave" },
+            { id: 2, name: "Mustafa Gamal" }
+        ];
+        let editingItemId = null;
+        let nextId = data.length > 0 ? Math.max(...data.map(item => item.id)) + 1 : 1;
+
+        const dataTableBody = document.querySelector("#dataTable tbody");
+        const createFullNameInput = document.getElementById("createFullName");
+        const createBtn = document.getElementById("createBtn");
+        const updateForm = document.getElementById("updateForm");
+        const updateFullNameInput = document.getElementById("updateFullName");
+        const updateBtn = document.getElementById("updateBtn");
+        const closeUpdateBtn = document.getElementById("closeUpdateBtn");
+
+        function renderTable() {
+            dataTableBody.innerHTML = "";
+            data.forEach(item => {
+                createTableRow(item);
+            });
+        }
+
+        function createTableRow(item) {
+            const row = dataTableBody.insertRow();
+            const nameCell = row.insertCell();
+            const actionsCell = row.insertCell();
+            actionsCell.classList.add("actions");
+
+            nameCell.textContent = item.name;
+
+            const editButton = createButton("Edit", "edit", () => editItem(item.id));
+            const deleteButton = createButton("Delete", "delete", () => deleteItem(item.id));
+
+            actionsCell.appendChild(editButton);
+            actionsCell.appendChild(deleteButton);
+        }
+
+        function createButton(text, className, onClickHandler) {
+            const button = document.createElement("button");
+            button.textContent = text;
+            button.classList.add(className);
+            button.addEventListener("click", onClickHandler);
+            return button;
+        }
+
+        function createItem() {
+            const newName = createFullNameInput.value.trim();
+            if (newName === "") {
+                alert("Please enter a name.");
+                return;
+            }
+            data.push({ id: nextId, name: newName });
+            nextId++;
+            renderTable();
+            createFullNameInput.value = "";
+        }
+
+        function editItem(id) {
+            editingItemId = id;
+            const itemToEdit = data.find(item => item.id === id);
+            if (itemToEdit) {
+                updateFullNameInput.value = itemToEdit.name;
+                updateForm.style.display = "flex";
+            }
+        }
+
+        function updateItem() {
+            const updatedName = updateFullNameInput.value.trim();
+            if (updatedName === "") {
+                alert("Please enter a name.");
+                return;
+            }
+            const itemIndex = data.findIndex(item => item.id === editingItemId);
+            if (itemIndex !== -1) {
+                data[itemIndex].name = updatedName;
+                renderTable();
+                cancelUpdate();
+            }
+        }
+
+        function deleteItem(id) {
+            const itemIndex = data.findIndex(item => item.id === id);
+            if (itemIndex !== -1) {
+                data.splice(itemIndex, 1);
+                renderTable();
+            }
+        }
+
+        function cancelUpdate() {
+            editingItemId = null;
+            updateForm.style.display = "none";
+            updateFullNameInput.value = "";
+        }
+
+        createBtn.addEventListener("click", createItem);
+        updateBtn.addEventListener("click", updateItem);
+        closeUpdateBtn.addEventListener("click", cancelUpdate);
+
+        renderTable();
+    </script>
+</body>
+</html>
