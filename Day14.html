@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CW Movies</title>
+    <style>
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            min-height: 100vh;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        header {
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 20px 0;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 3.5rem;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            font-family: 'Space Grotesk', sans-serif;
+            animation: waveText 2s ease-in-out infinite;
+            letter-spacing: 2px;
+            font-weight: 700;
+        }
+
+        @keyframes waveText {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        #search {
+            margin-top: 20px;
+            padding: 12px 24px;
+            width: 300px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            outline: none;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        #search::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        #search:focus {
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+        }
+
+        #movies {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 20px;
+            gap: 25px;
+        }
+
+        .movie {
+            background: rgba(255, 255, 255, 0.1);
+            margin: 0;
+            padding: 20px;
+            width: 220px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(8px);
+            transition: all 0.3s ease;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .movie:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .movie img {
+            width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .movie h3 {
+            margin: 15px 0 10px;
+            font-size: 1.4rem;
+            color: #ffffff;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .watch-button {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 25px;
+            background: linear-gradient(135deg, #fdbb2d, #b21f1f);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 500;
+            font-family: 'Space Grotesk', sans-serif;
+            transition: all 0.3s ease;
+            border: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .watch-button:hover {
+            background: linear-gradient(135deg, #b21f1f, #1a2a6c);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .movie-overview {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(26, 42, 108, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            font-size: 1rem;
+            color: #ffffff;
+            text-align: left;
+            overflow-y: auto;
+            font-family: 'Space Grotesk', sans-serif;
+            line-height: 1.6;
+            backdrop-filter: blur(8px);
+            z-index: 1;
+        }
+
+        .movie:hover .movie-overview {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+    <h1>CodeWave</h1>
+    <input type="text" id="search" placeholder="Search for a movie...">
+    </header>
+    <div id="movies"></div>
+
+    <script>
+        const movies = [
+            {
+                 title: "Avatar: The Way of Water",
+                poster_path: "/t6HIqrRAclMCA60NsSmeqe9RmNV.jpg",
+                watch_link: "https://www.youtube.com/watch?v=d9MyW72ELq0",
+                overview: "Jake Sully and Ney'tiri have formed a family and are doing everything to stay together. However, they must leave their home and explore the regions of Pandora."
+            },
+            {
+                title: "Top Gun: Maverick",
+                poster_path: "/62HCnUTziyWcpDaBO2i1DX17ljH.jpg",
+                watch_link: "https://www.youtube.com/watch?v=giXco2jaZ_4",
+                overview: "After more than thirty years of service as one of the Navy's top aviators, Pete 'Maverick' Mitchell is where he belongs, pushing the envelope as a courageous test pilot."
+            },
+            {
+                title: "Spider-Man: No Way Home",
+                poster_path: "/uJYYizSuA9Y3DCs0qS4qWvHfZg4.jpg",
+                watch_link: "https://www.youtube.com/watch?v=JfVOs4VSpmA",
+                overview: "Peter Parker is unmasked and no longer able to separate his normal life from the high-stakes of being a super-hero."
+            },
+            {
+                 title: "Black Panther: Wakanda Forever",
+                poster_path: "/sv1xJUazXeYqALzczSZ3O6nkH75.jpg",
+                watch_link: "https://www.youtube.com/watch?v=_Z3QKkl1WyM",
+                overview: "The people of Wakanda fight to protect their home from intervening world powers as they mourn the death of King T'Challa."
+            },
+            {
+                title: "Doctor Strange in the Multiverse of Madness",
+                poster_path: "/9Gtg2DzBhmYamXBS1hKAhiwbBKS.jpg",
+                watch_link: "https://www.youtube.com/watch?v=aWzlQ2N6qqg",
+                overview: "Doctor Strange teams up with a mysterious teenage girl from his dreams who can travel across multiverses, to battle multiple threats."
+            }
+        ];
+
+        const moviesContainer = document.getElementById('movies');
+        const searchInput = document.getElementById('search');
+
+        function displayMovies(movies) {
+            moviesContainer.innerHTML = '';
+            movies.forEach(movie => {
+                const movieElement = document.createElement('div');
+                movieElement.classList.add('movie');
+
+                const posterUrl = movie.poster_path 
+                    ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` 
+                    : 'https://via.placeholder.com/200x300?text=No+Image';
+
+                movieElement.innerHTML = `
+                    <img src="${posterUrl}" alt="${movie.title}">
+                    <h3>${movie.title}</h3>
+                    <a href="${movie.watch_link}" target="_blank" class="watch-button">Watch Now</a>
+                    <div class="movie-overview"><strong>Overview:</strong><br>${movie.overview}</div>
+                `;
+                moviesContainer.appendChild(movieElement);
+            });
+        }
+
+        function searchMovies(query) {
+            const filteredMovies = movies.filter(movie => 
+                movie.title.toLowerCase().includes(query.toLowerCase())
+            );
+            displayMovies(filteredMovies);
+        }
+
+        searchInput.addEventListener('input', () => {
+            const query = searchInput.value;
+            searchMovies(query);
+        });
+
+        displayMovies(movies);
+    </script>
+</body>
+</html>
