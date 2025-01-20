@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CODE WAVE Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --sidebar-width: 250px;
+        }
+        
+        body {
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 1000;
+            background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+        }
+
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 1rem 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .sidebar .nav-link:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar .nav-link.active {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .sidebar .nav-link i {
+            margin-right: 0.5rem;
+        }
+
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            background-color: #f8f9fc;
+        }
+
+        .top-navbar {
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            background: #fff;
+        }
+
+        .dropdown-notifications {
+            min-width: 300px;
+            padding: 0;
+        }
+
+        .dropdown-notifications .dropdown-item {
+            white-space: normal;
+            padding: 1rem;
+            border-bottom: 1px solid #e3e6f0;
+        }
+
+        .notification-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .table-container {
+            background: #fff;
+            border-radius: 0.35rem;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        }
+
+        .priority-high {
+            color: #e74a3b;
+        }
+
+        .priority-medium {
+            color: #f6c23e;
+        }
+
+        .priority-low {
+            color: #1cc88a;
+        }
+
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1050;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="d-flex justify-content-center py-4">
+            <h3 class="text-white fw-bold">CODE WAVE</h3>
+        </div>
+        <div class="nav flex-column">
+            <a class="nav-link active" href="#">
+                <i class="bi bi-speedometer2"></i> Dashboard
+            </a>
+        </div>
+    </nav>
+
+
+    <div class="main-content">
+
+        <nav class="navbar top-navbar navbar-expand px-4 py-3">
+            <div class="flex-grow-1">
+                <form class="d-none d-md-flex" id="searchForm">
+                    <div class="input-group">
+                        <input type="search" class="form-control" id="searchInput" placeholder="Search for..." aria-label="Search">
+                        <button class="btn btn-primary" type="submit">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item dropdown me-3">
+                    <a class="nav-link position-relative" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-bell fs-5"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notificationCount">
+                            3+
+                        </span>
+                    </a>
+                    <div class="dropdown-menu dropdown-notifications dropdown-menu-end">
+                        <h6 class="dropdown-header bg-primary text-white">
+                            Notifications
+                        </h6>
+                        <div id="notificationList">
+     
+                        </div>
+                        <a class="dropdown-item text-center small text-gray-500 py-3" href="#">Show All Alerts</a>
+                    </div>
+                </li>
+                
+                <li class="nav-item">
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addWorkModal">
+                        <i class="bi bi-plus-lg"></i> Add Work
+                    </button>
+                </li>
+            </ul>
+        </nav>
+
+
+        <div class="p-4">
+            <div class="table-container p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="mb-0">Task Management</h4>
+                    
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>#</th>
+                                <th>Release</th>
+                                <th>Test Suite Name</th>
+                                <th>Scenario Type</th>
+                                <th>Manual TC Name</th>
+                                <th>VTAF TC Name</th>
+                                <th>Priority</th>
+                                <th>Status</th>
+                                
+                            </tr>
+                        </thead>
+                        <tbody id="taskTableBody">
+    
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="addWorkModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Task</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addTaskForm">
+                        <div class="mb-3">
+                            <label class="form-label">Release Version</label>
+                            <input type="text" class="form-control" name="release" placeholder="e.g., v2.1.0" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Test Suite Name</label>
+                            <input type="text" class="form-control" name="testSuite" placeholder="Enter test suite name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Scenario Type</label>
+                            <select class="form-select" name="scenarioType" required>
+                                <option value="Integration">Integration</option>
+                                <option value="E2E">E2E</option>
+                                <option value="Unit">Unit</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Manual TC Name</label>
+                            <input type="text" class="form-control" name="manualTCName" placeholder="Enter manual TC name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">VTAF TC Name</label>
+                            <input type="text" class="form-control" name="vtafTCName" placeholder="Enter VTAF TC name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Priority</label>
+                            <select class="form-select" name="priority" required>
+                                <option value="High">High</option>
+                                <option value="Medium">Medium</option>
+                                <option value="Low">Low</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="addTaskBtn">Add Task</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+  
+    <div class="toast-container"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        class TaskManager {
+            constructor() {
+                this.tasks = [
+                    {
+                        id: 1,
+                        release: 'v2.1.0',
+                        testSuite: 'Authentication Suite',
+                        scenarioType: 'Integration',
+                        manualTCName: 'Login_TC_001',
+                        vtafTCName: 'VTAF_AUTH_001',
+                        priority: 'High',
+                        status: 'Completed'
+                    },
+                    {
+                        id: 2,
+                        release: 'v2.1.0',
+                        testSuite: 'Payment Suite',
+                        scenarioType: 'E2E',
+                        manualTCName: 'Payment_TC_003',
+                        vtafTCName: 'VTAF_PAY_003',
+                        priority: 'Medium',
+                        status: 'In Progress'
+                    }
+                ];
+                this.notifications = [
+                    {
+                        id: 1,
+                        date: 'December 12, 2023',
+                        message: 'A new monthly report is ready to download!',
+                        icon: 'bi-file-text',
+                        type: 'primary'
+                    },
+                    {
+                        id: 2,
+                        date: 'December 7, 2023',
+                        message: '$290.29 has been deposited into your account!',
+                        icon: 'bi-cash',
+                        type: 'success'
+                    },
+                    {
+                        id: 3,
+                        date: 'December 2, 2023',
+                        message: 'Spending Alert: We\'ve noticed unusually high spending for your account.',
+                        icon: 'bi-exclamation-triangle',
+                        type: 'warning'
+                    }
+                ];
+                this.initializeEventListeners();
+                this.renderTasks();
+                this.renderNotifications();
+            }
+
+            initializeEventListeners() {
+                document.getElementById('addTaskBtn').addEventListener('click', () => this.addTask());
+                document.getElementById('searchForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.searchTasks();
+                });
+                
+            }
+
+            addTask() {
+                const form = document.getElementById('addTaskForm');
+                const formData = new FormData(form);
+                
+                const newTask = {
+                    id: this.tasks.length + 1,
+                    release: formData.get('release'),
+                    testSuite: formData.get('testSuite'),
+                    scenarioType: formData.get('scenarioType'),
+                    manualTCName: formData.get('manualTCName'),
+                    vtafTCName: formData.get('vtafTCName'),
+                    priority: formData.get('priority'),
+                    status: 'In Progress'
+                };
+
+                this.tasks.push(newTask);
+                this.renderTasks();
+                this.showToast('Task added successfully!');
+                
+                const modal = bootstrap.Modal.getInstance(document.getElementById('addWorkModal'));
+                modal.hide();
+                form.reset();
+            }
+
+            createTaskRow(task) {
+                return `
+                    <tr>
+                        <td>${task.id}</td>
+                        <td>${task.release}</td>
+                        <td>${task.testSuite}</td>
+                        <td>${task.scenarioType}</td>
+                        <td>${task.manualTCName}</td>
+                        <td>${task.vtafTCName}</td>
+                        <td><span class="badge bg-${this.getPriorityClass(task.priority)}">${task.priority}</span></td>
+                        <td>
+                            <select class="form-select form-select-sm" onchange="taskManager.updateStatus(${task.id}, this.value)">
+                                ${this.getStatusOptions(task.status)}
+                            </select>
+                        </td>
+                        
+                    </tr>
+                `;
+            }
+
+            renderTasks() {
+                const tbody = document.getElementById('taskTableBody');
+                tbody.innerHTML = '';
+                this.tasks.forEach(task => {
+                    tbody.innerHTML += this.createTaskRow(task);
+                });
+            }
+
+            getPriorityClass(priority) {
+                return {
+                    'High': 'danger',
+                    'Medium': 'warning',
+                    'Low': 'success'
+                }[priority] || 'secondary';
+            }
+
+            getStatusOptions(currentStatus) {
+                return ['In Progress', 'Completed', 'On Hold', 'Cancelled']
+                    .map(status => `<option ${status === currentStatus ? 'selected' : ''}>${status}</option>`)
+                    .join('');
+            }
+
+            updateStatus(taskId, newStatus) {
+                const task = this.tasks.find(t => t.id === taskId);
+                if (task) {
+                    task.status = newStatus;
+                    this.showToast(`Task status updated to ${newStatus}`);
+                }
+            }
+
+            
+
+            
+
+            searchTasks() {
+                const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+                const filteredTasks = this.tasks.filter(task => 
+                    Object.values(task).some(value => 
+                        String(value).toLowerCase().includes(searchTerm)
+                    )
+                );
+                this.renderFilteredTasks(filteredTasks);
+            }
+
+            renderFilteredTasks(filteredTasks) {
+                const tbody = document.getElementById('taskTableBody');
+                tbody.innerHTML = filteredTasks.length ? 
+                    filteredTasks.map(task => this.createTaskRow(task)).join('') :
+                    `<tr><td colspan="9" class="text-center">No tasks found</td></tr>`;
+            }
+
+            
+
+            renderNotifications() {
+                document.getElementById('notificationList').innerHTML = this.notifications
+                    .map(notification => `
+                        <a class="dropdown-item d-flex align-items-center" href="#">
+                            <div class="notification-icon bg-${notification.type} text-white me-3">
+                                <i class="bi ${notification.icon}"></i>
+                            </div>
+                            <div>
+                                <div class="small text-gray-500">${notification.date}</div>
+                                <span>${notification.message}</span>
+                            </div>
+                        </a>
+                    `).join('');
+            }
+
+            showToast(message) {
+                const toast = document.createElement('div');
+                toast.className = 'toast';
+                toast.innerHTML = `
+                    <div class="toast-header">
+                        <strong class="me-auto">Notification</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+                    </div>
+                    <div class="toast-body">${message}</div>
+                `;
+                document.querySelector('.toast-container').appendChild(toast);
+                new bootstrap.Toast(toast).show();
+                setTimeout(() => toast.remove(), 5000);
+            }
+        }
+
+        const taskManager = new TaskManager();
+    </script>
+</body>
+</html>
