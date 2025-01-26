@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Games For Gamers</title>
+
+    <link href="/dist/output.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-[#111827] text-gray-300">
+    <div class="main-container max-w-7xl mx-auto px-4 py-8">
+        <nav class="navigation flex justify-between items-center mb-8">
+            <div class="title text-white text-xl font-bold">KORSAT X PARMAGA</div>
+
+            <div class="links flex space-x-6">
+                <div class="link flex items-center space-x-2 text-white hover:text-white">
+                    <div class="text font-semibold">Home</div>
+                    <div class="icon"><i class="fas fa-home"></i></div>
+                </div>
+
+                <div
+                    class="link flex items-center space-x-2 text-gray-400 hover:text-white transition-colors duration-200">
+                    <div class="text">About</div>
+                    <div class="icon"><i class="fas fa-info-circle"></i></div>
+                </div>
+
+                <div
+                    class="link flex items-center space-x-2 text-gray-400 hover:text-white transition-colors duration-200">
+                    <div class="text">Contact</div>
+                    <div class="icon"><i class="fas fa-envelope"></i></div>
+                </div>
+            </div>
+        </nav>
+
+        <header class="header flex justify-between items-center mb-12">
+            <div class="title">
+                <div class="main-title text-white text-4xl font-bold mb-2">Games</div>
+                <div class="sub-title text-green-500 text-lg">For Gamers</div>
+            </div>
+
+            <div class="user flex space-x-4">
+                <div
+                    class="login bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-md cursor-pointer transition-colors duration-200">
+                    Log in</div>
+                <div
+                    class="signup bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-md cursor-pointer transition-colors duration-200">
+                    Sign up</div>
+            </div>
+        </header>
+
+        <div class="games space-y-10">
+            <section class="latest-games">
+                <div class="title text-yellow-500 text-2xl font-semibold mb-6">Latest Games</div>
+                <div class="latest-games-cards cards grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                </div>
+            </section>
+
+            <section class="most-popular">
+                <div class="title text-yellow-500 text-2xl font-semibold mb-6">Most Popular</div>
+                <div class="most-popular-cards cards grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                </div>
+            </section>
+
+            <div class="load-more mt-10 text-center">
+                <button id="load-more-button"
+                    class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-md transition-colors duration-200">Load
+                    More</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const latestGamesCardsContainer = document.querySelector('.latest-games-cards');
+        const mostPopularCardsContainer = document.querySelector('.most-popular-cards');
+        const loadMoreButton = document.getElementById('load-more-button');
+
+        const gameData = [
+            { title: "Assassin's Creed Mirage", developer: "Ubisoft", rating: "4.5/5", image: "img/assassins-creed-mirage.jpg" },
+            { title: "Game Title 2", developer: "Developer 2", rating: "4.2/5", image: "img/assassins-creed-mirage.jpg" },
+            { title: "Game Title 3", developer: "Developer 3", rating: "4.8/5", image: "img/assassins-creed-mirage.jpg" },
+            { title: "Game Title 4", developer: "Developer 4", rating: "4.0/5", image: "img/assassins-creed-mirage.jpg" },
+            { title: "Game Title 5", developer: "Developer 5", rating: "4.6/5", image: "img/assassins-creed-mirage.jpg" },
+            { title: "Game Title 6", developer: "Developer 6", rating: "4.3/5", image: "img/assassins-creed-mirage.jpg" },
+            { title: "Game Title 7", developer: "Developer 7", rating: "4.7/5", image: "img/assassins-creed-mirage.jpg" },
+            { title: "Game Title 8", developer: "Developer 8", rating: "4.1/5", image: "img/assassins-creed-mirage.jpg" },
+            { title: "Game Title 9", developer: "Developer 9", rating: "4.9/5", image: "img/assassins-creed-mirage.jpg" },
+        ];
+
+        function createGameCardHTML(game) {
+            return `
+                <div class="card bg-[#1E293B] rounded-lg overflow-hidden shadow-md hover:bg-[#2D3748] transition-colors duration-200 cursor-pointer">
+                    <div class="relative">
+                        <img src="${game.image}" alt="${game.title}" class="w-full h-56 object-cover">
+                        <div class="rating absolute top-2 left-2 bg-yellow-500 text-black font-bold py-1 px-2 rounded-md flex items-center space-x-1">
+                            <i class="fas fa-star"></i>
+                            <span>${game.rating}</span>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <div class="main-title text-white font-semibold text-lg mb-1">${game.title}</div>
+                        <div class="sub-title text-gray-400 text-sm">Developers: ${game.developer}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function addInitialCards(container, sectionGames) {
+            for (let i = 0; i < 3; i++) {
+                container.innerHTML += createGameCardHTML(sectionGames[i]);
+            }
+        }
+
+        function loadMoreCards(container, sectionGames, startIndex) {
+            for (let i = startIndex; i < startIndex + 3 && i < sectionGames.length; i++) {
+                container.innerHTML += createGameCardHTML(sectionGames[i]);
+            }
+        }
+
+        const latestGames = gameData.slice(0, 6);
+        const mostPopularGames = gameData.slice(3, 9);
+
+        addInitialCards(latestGamesCardsContainer, latestGames);
+        addInitialCards(mostPopularCardsContainer, mostPopularGames);
+
+        let latestGamesLoadIndex = 3;
+        let mostPopularGamesLoadIndex = 3;
+
+        loadMoreButton.addEventListener('click', () => {
+            loadMoreCards(latestGamesCardsContainer, latestGames, latestGamesLoadIndex);
+            latestGamesLoadIndex += 3;
+
+            loadMoreCards(mostPopularCardsContainer, mostPopularGames, mostPopularGamesLoadIndex);
+            mostPopularGamesLoadIndex += 3;
+
+            if (latestGamesLoadIndex >= latestGames.length && mostPopularGamesLoadIndex >= mostPopularGames.length) {
+                loadMoreButton.disabled = true;
+                loadMoreButton.textContent = "No More Games";
+            }
+        });
+
+    </script>
+
+</body>
+
+</html>
